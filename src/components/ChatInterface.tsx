@@ -2,16 +2,17 @@ import { useState, useRef, useEffect } from "react";
 import { ChatMessage } from "./ChatMessage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Send, Settings, Loader2 } from "lucide-react";
+import { ArrowLeft, Send, MoreVertical, Heart } from "lucide-react";
 import { Character } from "./CharacterLibrary";
 import { ChatSettings } from "./ChatSettings";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 
-interface Message {
+export interface Message {
   id: string;
   content: string;
-  isUser: boolean;
+  role: "user" | "assistant";
   timestamp: string;
 }
 
@@ -23,10 +24,9 @@ interface ChatInterfaceProps {
 export const ChatInterface = ({ character, onBack }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const [settings, setSettings] = useState(character.personality);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   // Load conversation history from localStorage
@@ -39,7 +39,7 @@ export const ChatInterface = ({ character, onBack }: ChatInterfaceProps) => {
       const welcomeMessage: Message = {
         id: Date.now().toString(),
         content: getWelcomeMessage(),
-        isUser: false,
+        role: "assistant",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setMessages([welcomeMessage]);
@@ -55,10 +55,8 @@ export const ChatInterface = ({ character, onBack }: ChatInterfaceProps) => {
 
   // Auto-scroll to bottom
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isTyping]);
 
   const getWelcomeMessage = () => {
     const greetings: Record<string, string> = {
@@ -72,22 +70,22 @@ export const ChatInterface = ({ character, onBack }: ChatInterfaceProps) => {
     return greetings[character.id] || `Hello! I'm ${character.name}. How can I help you today?`;
   };
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isTyping) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
       content: input,
-      isUser: true,
+      role: "user",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
     setMessages(prev => [...prev, userMessage]);
     setInput("");
-    setIsLoading(true);
+    setIsTyping(true);
 
     try {
-      // Simulate AI response with personality
       await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
       
       const aiResponse = generateResponse(input);
@@ -95,7 +93,7 @@ export const ChatInterface = ({ character, onBack }: ChatInterfaceProps) => {
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: aiResponse,
-        isUser: false,
+        role: "assistant",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
@@ -107,7 +105,7 @@ export const ChatInterface = ({ character, onBack }: ChatInterfaceProps) => {
         variant: "destructive"
       });
     } finally {
-      setIsLoading(false);
+      setIsTyping(false);
     }
   };
 
@@ -161,102 +159,113 @@ export const ChatInterface = ({ character, onBack }: ChatInterfaceProps) => {
     return response;
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
   return (
-    <div className="flex flex-col h-screen">
-      {/* Header */}
-      <div className="border-b border-border/50 bg-card/50 backdrop-blur-sm shadow-soft px-4 py-3 flex items-center justify-between sticky top-0 z-10">
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="ghost" 
+    <div className="min-h-screen flex flex-col bg-background">
+      {/* Instagram-style Header */}
+      <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm border-b border-border">
+        <div className="px-4 py-3 flex items-center gap-3">
+          <Button
+            variant="ghost"
             size="icon"
             onClick={onBack}
-            className="hover:bg-secondary"
+            className="hover:bg-secondary rounded-full"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-5 w-5 text-foreground" />
           </Button>
-          <div className="flex items-center gap-3">
-            <div className="text-3xl">{character.avatar}</div>
+          
+          <div className="flex-1 flex items-center gap-3">
+            <div className="relative">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center text-xl border-2 border-primary/50">
+                {character.avatar}
+              </div>
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-primary border-2 border-card" />
+            </div>
             <div>
-              <h2 className="font-semibold text-lg">{character.name}</h2>
-              <p className="text-xs text-muted-foreground">Always remembers your conversations</p>
+              <h2 className="font-semibold text-foreground text-sm">{character.name}</h2>
+              <p className="text-xs text-primary">Active now</p>
             </div>
           </div>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hover:bg-secondary rounded-full text-destructive"
+          >
+            <Heart className="h-5 w-5" />
+          </Button>
+
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-secondary rounded-full"
+              >
+                <MoreVertical className="h-5 w-5 text-foreground" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="bg-card border-l border-border">
+              <SheetHeader>
+                <SheetTitle className="text-foreground">Chat Settings</SheetTitle>
+              </SheetHeader>
+              <ChatSettings settings={settings} onSettingsChange={setSettings} />
+            </SheetContent>
+          </Sheet>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setShowSettings(!showSettings)}
-          className="hover:bg-secondary"
-        >
-          <Settings className="h-5 w-5" />
-        </Button>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* Chat Area */}
-        <div className="flex-1 flex flex-col">
-          <ScrollArea className="flex-1 px-4 py-6">
-            <div className="max-w-4xl mx-auto">
-              {messages.map((message) => (
-                <ChatMessage
-                  key={message.id}
-                  content={message.content}
-                  isUser={message.isUser}
-                  avatar={message.isUser ? undefined : character.avatar}
-                  timestamp={message.timestamp}
-                />
-              ))}
-              {isLoading && (
-                <div className="flex gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-xl bg-gradient-to-br from-primary/20 to-accent/20">
-                    {character.avatar}
-                  </div>
-                  <div className="bg-card rounded-2xl rounded-tl-sm px-4 py-3 shadow-soft border border-border/50">
-                    <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                  </div>
-                </div>
-              )}
-              <div ref={scrollRef} />
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3" ref={messagesEndRef}>
+        {messages.map((message, index) => (
+          <ChatMessage 
+            key={message.id} 
+            message={message}
+            showAvatar={message.role === "assistant" && (index === 0 || messages[index - 1]?.role !== "assistant")}
+            avatar={character.avatar}
+          />
+        ))}
+        {isTyping && (
+          <div className="flex gap-2 items-end">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center text-sm flex-shrink-0">
+              {character.avatar}
             </div>
-          </ScrollArea>
-
-          {/* Input Area */}
-          <div className="border-t border-border/50 bg-card/50 backdrop-blur-sm p-4">
-            <div className="max-w-4xl mx-auto flex gap-2">
-              <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Type your message..."
-                className="flex-1 bg-background border-border/50 focus:border-primary"
-                disabled={isLoading}
-              />
-              <Button 
-                onClick={handleSend} 
-                disabled={isLoading || !input.trim()}
-                className="bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-soft"
-              >
-                <Send className="h-4 w-4" />
-              </Button>
+            <div className="bg-secondary rounded-2xl px-4 py-2.5 rounded-bl-sm">
+              <div className="flex gap-1">
+                <div className="w-2 h-2 rounded-full bg-primary/60 animate-pulse" style={{ animationDelay: '0ms' }} />
+                <div className="w-2 h-2 rounded-full bg-primary/60 animate-pulse" style={{ animationDelay: '150ms' }} />
+                <div className="w-2 h-2 rounded-full bg-primary/60 animate-pulse" style={{ animationDelay: '300ms' }} />
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Settings Sidebar */}
-        {showSettings && (
-          <ChatSettings
-            settings={settings}
-            onSettingsChange={setSettings}
-            onClose={() => setShowSettings(false)}
-          />
         )}
+      </div>
+
+      {/* Instagram-style Input */}
+      <div className="sticky bottom-0 bg-card/95 backdrop-blur-sm border-t border-border p-3">
+        <form onSubmit={handleSend} className="flex items-center gap-2 max-w-4xl mx-auto">
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder={`Message ${character.name}...`}
+            className={cn(
+              "flex-1 bg-secondary/80 border-secondary text-foreground placeholder:text-muted-foreground",
+              "rounded-full px-4 py-2.5 focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary"
+            )}
+          />
+          <Button 
+            type="submit" 
+            size="icon"
+            disabled={!input.trim() || isTyping}
+            className={cn(
+              "rounded-full w-10 h-10 flex-shrink-0",
+              input.trim() 
+                ? "bg-gradient-primary hover:shadow-glow" 
+                : "bg-secondary text-muted-foreground hover:bg-secondary"
+            )}
+          >
+            <Send className="h-4 w-4" />
+          </Button>
+        </form>
       </div>
     </div>
   );

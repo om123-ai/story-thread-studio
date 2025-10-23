@@ -11,24 +11,26 @@ interface ChatSettingsProps {
     verbosity: number;
   };
   onSettingsChange: (settings: { creativity: number; emotion: number; verbosity: number }) => void;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 export const ChatSettings = ({ settings, onSettingsChange, onClose }: ChatSettingsProps) => {
   return (
-    <div className="w-80 border-l border-border/50 bg-card/50 backdrop-blur-sm p-6 overflow-y-auto animate-slide-up">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold">Personality Settings</h3>
-        <Button variant="ghost" size="icon" onClick={onClose}>
-          <X className="h-4 w-4" />
-        </Button>
-      </div>
+    <div className="space-y-6 mt-6">
+      {onClose && (
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold">Personality Settings</h3>
+          <Button variant="ghost" size="icon" onClick={onClose}>
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
 
       <div className="space-y-6">
-        <Card className="p-4 bg-gradient-card border-border/50 shadow-soft">
+        <Card className="p-4 bg-card border-border/50 shadow-soft">
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="h-4 w-4 text-primary" />
-            <Label className="font-medium">Creativity</Label>
+            <Label className="font-medium text-foreground">Creativity</Label>
           </div>
           <Slider
             value={[settings.creativity]}
@@ -44,10 +46,10 @@ export const ChatSettings = ({ settings, onSettingsChange, onClose }: ChatSettin
           </p>
         </Card>
 
-        <Card className="p-4 bg-gradient-card border-border/50 shadow-soft">
+        <Card className="p-4 bg-card border-border/50 shadow-soft">
           <div className="flex items-center gap-2 mb-3">
             <Heart className="h-4 w-4 text-accent" />
-            <Label className="font-medium">Emotion</Label>
+            <Label className="font-medium text-foreground">Emotion</Label>
           </div>
           <Slider
             value={[settings.emotion]}
@@ -63,10 +65,10 @@ export const ChatSettings = ({ settings, onSettingsChange, onClose }: ChatSettin
           </p>
         </Card>
 
-        <Card className="p-4 bg-gradient-card border-border/50 shadow-soft">
+        <Card className="p-4 bg-card border-border/50 shadow-soft">
           <div className="flex items-center gap-2 mb-3">
             <MessageSquare className="h-4 w-4 text-primary" />
-            <Label className="font-medium">Verbosity</Label>
+            <Label className="font-medium text-foreground">Verbosity</Label>
           </div>
           <Slider
             value={[settings.verbosity]}

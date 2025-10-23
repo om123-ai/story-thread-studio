@@ -1,4 +1,6 @@
-import { CharacterCard } from "./CharacterCard";
+import { useState } from "react";
+import { SwipeCard } from "./SwipeCard";
+import { Flame, Grid3x3, Sparkles } from "lucide-react";
 
 export interface Character {
   id: string;
@@ -83,29 +85,146 @@ export const DEFAULT_CHARACTERS: Character[] = [
 ];
 
 export const CharacterLibrary = ({ onSelectCharacter }: CharacterLibraryProps) => {
-  return (
-    <div className="min-h-screen p-6 max-w-7xl mx-auto">
-      <div className="mb-8 text-center space-y-3">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-          Choose Your Character
-        </h1>
-        <p className="text-muted-foreground text-lg">
-          Every character remembers your conversations and grows with you
-        </p>
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [viewMode, setViewMode] = useState<"swipe" | "grid">("swipe");
+  const [likedCharacters, setLikedCharacters] = useState<string[]>([]);
+
+  const handleSwipe = (direction: "left" | "right") => {
+    if (direction === "right") {
+      setLikedCharacters([...likedCharacters, DEFAULT_CHARACTERS[currentIndex].id]);
+    }
+    
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % DEFAULT_CHARACTERS.length);
+    }, 400);
+  };
+
+  const handleChat = () => {
+    onSelectCharacter(DEFAULT_CHARACTERS[currentIndex]);
+  };
+
+  if (viewMode === "grid") {
+    return (
+      <div className="min-h-screen bg-background">
+        {/* Header */}
+        <div className="sticky top-0 z-20 bg-card/95 backdrop-blur-sm border-b border-border">
+          <div className="flex items-center justify-between p-4 max-w-7xl mx-auto">
+            <div className="flex items-center gap-2">
+              <Flame className="w-6 h-6 text-primary" />
+              <h1 className="text-xl font-bold text-foreground">Vibe AI</h1>
+            </div>
+            <button 
+              onClick={() => setViewMode("swipe")}
+              className="p-2 hover:bg-secondary rounded-lg transition-colors"
+            >
+              <Sparkles className="w-5 h-5 text-primary" />
+            </button>
+          </div>
+        </div>
+
+        {/* Grid View */}
+        <div className="p-4 max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {DEFAULT_CHARACTERS.map((character) => (
+              <div
+                key={character.id}
+                onClick={() => onSelectCharacter(character)}
+                className="relative aspect-[3/4] rounded-xl overflow-hidden cursor-pointer group bg-gradient-to-br from-primary/10 to-accent/10"
+              >
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
+                  <div className="text-6xl mb-2 group-hover:scale-110 transition-transform">
+                    {character.avatar}
+                  </div>
+                  <h3 className="font-semibold text-center text-foreground">{character.name}</h3>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                {likedCharacters.includes(character.id) && (
+                  <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                    <Flame className="w-4 h-4 text-primary-foreground" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {DEFAULT_CHARACTERS.map((character) => (
-          <CharacterCard
-            key={character.id}
-            name={character.name}
-            description={character.description}
-            avatar={character.avatar}
-            tags={character.tags}
-            messageCount={character.messageCount}
-            onClick={() => onSelectCharacter(character)}
-          />
-        ))}
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Header */}
+      <div className="sticky top-0 z-20 bg-card/95 backdrop-blur-sm border-b border-border">
+        <div className="flex items-center justify-between p-4 max-w-md mx-auto">
+          <div className="flex items-center gap-2">
+            <Flame className="w-6 h-6 text-primary" />
+            <h1 className="text-xl font-bold text-foreground">Vibe AI</h1>
+          </div>
+          <button 
+            onClick={() => setViewMode("grid")}
+            className="p-2 hover:bg-secondary rounded-lg transition-colors"
+          >
+            <Grid3x3 className="w-5 h-5 text-primary" />
+          </button>
+        </div>
+      </div>
+
+      {/* Swipe Cards Container */}
+      <div className="flex-1 relative max-w-md mx-auto w-full">
+        <div className="absolute inset-0">
+          {DEFAULT_CHARACTERS.map((character, index) => {
+            const isVisible = index >= currentIndex && index < currentIndex + 3;
+            if (!isVisible) return null;
+
+            const offset = index - currentIndex;
+            const scale = 1 - offset * 0.05;
+            const yOffset = offset * 10;
+            const opacity = 1 - offset * 0.3;
+
+            return (
+              <SwipeCard
+                key={character.id}
+                character={character}
+                onSwipe={handleSwipe}
+                onChat={handleChat}
+                style={{
+                  zIndex: 100 - offset,
+                  transform: `scale(${scale}) translateY(${yOffset}px)`,
+                  opacity,
+                  pointerEvents: offset === 0 ? "auto" : "none",
+                }}
+              />
+            );
+          })}
+        </div>
+
+        {/* No more characters */}
+        {currentIndex >= DEFAULT_CHARACTERS.length && (
+          <div className="absolute inset-0 flex items-center justify-center p-8">
+            <div className="text-center space-y-4">
+              <div className="text-6xl">✨</div>
+              <h2 className="text-2xl font-bold text-foreground">You've seen everyone!</h2>
+              <p className="text-muted-foreground">Check your matches or start over</p>
+              <button
+                onClick={() => setCurrentIndex(0)}
+                className="px-6 py-3 bg-gradient-primary text-primary-foreground rounded-full font-semibold hover:shadow-glow transition-all"
+              >
+                Start Over
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom Info */}
+      <div className="p-4 text-center text-muted-foreground text-sm border-t border-border bg-card">
+        {currentIndex < DEFAULT_CHARACTERS.length ? (
+          <>
+            Swipe left to skip • Swipe right to like • Tap chat to start
+          </>
+        ) : (
+          <>You've seen all {DEFAULT_CHARACTERS.length} characters</>
+        )}
       </div>
     </div>
   );
