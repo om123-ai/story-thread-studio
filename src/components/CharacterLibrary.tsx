@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { SwipeCard } from "./SwipeCard";
-import { Flame, Grid3x3, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 export interface Character {
   id: string;
@@ -85,146 +84,64 @@ export const DEFAULT_CHARACTERS: Character[] = [
 ];
 
 export const CharacterLibrary = ({ onSelectCharacter }: CharacterLibraryProps) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [viewMode, setViewMode] = useState<"swipe" | "grid">("swipe");
-  const [likedCharacters, setLikedCharacters] = useState<string[]>([]);
-
-  const handleSwipe = (direction: "left" | "right") => {
-    if (direction === "right") {
-      setLikedCharacters([...likedCharacters, DEFAULT_CHARACTERS[currentIndex].id]);
-    }
-    
-    setTimeout(() => {
-      setCurrentIndex((prev) => (prev + 1) % DEFAULT_CHARACTERS.length);
-    }, 400);
-  };
-
-  const handleChat = () => {
-    onSelectCharacter(DEFAULT_CHARACTERS[currentIndex]);
-  };
-
-  if (viewMode === "grid") {
-    return (
-      <div className="min-h-screen bg-background">
-        {/* Header */}
-        <div className="sticky top-0 z-20 bg-card/95 backdrop-blur-sm border-b border-border">
-          <div className="flex items-center justify-between p-4 max-w-7xl mx-auto">
-            <div className="flex items-center gap-2">
-              <Flame className="w-6 h-6 text-primary" />
-              <h1 className="text-xl font-bold text-foreground">Vibe AI</h1>
-            </div>
-            <button 
-              onClick={() => setViewMode("swipe")}
-              className="p-2 hover:bg-secondary rounded-lg transition-colors"
-            >
-              <Sparkles className="w-5 h-5 text-primary" />
-            </button>
-          </div>
-        </div>
-
-        {/* Grid View */}
-        <div className="p-4 max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {DEFAULT_CHARACTERS.map((character) => (
-              <div
-                key={character.id}
-                onClick={() => onSelectCharacter(character)}
-                className="relative aspect-[3/4] rounded-xl overflow-hidden cursor-pointer group bg-gradient-to-br from-primary/10 to-accent/10"
-              >
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
-                  <div className="text-6xl mb-2 group-hover:scale-110 transition-transform">
-                    {character.avatar}
-                  </div>
-                  <h3 className="font-semibold text-center text-foreground">{character.name}</h3>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                {likedCharacters.includes(character.id) && (
-                  <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
-                    <Flame className="w-4 h-4 text-primary-foreground" />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="sticky top-0 z-20 bg-card/95 backdrop-blur-sm border-b border-border">
-        <div className="flex items-center justify-between p-4 max-w-md mx-auto">
-          <div className="flex items-center gap-2">
-            <Flame className="w-6 h-6 text-primary" />
-            <h1 className="text-xl font-bold text-foreground">Vibe AI</h1>
-          </div>
-          <button 
-            onClick={() => setViewMode("grid")}
-            className="p-2 hover:bg-secondary rounded-lg transition-colors"
-          >
-            <Grid3x3 className="w-5 h-5 text-primary" />
-          </button>
-        </div>
-      </div>
-
-      {/* Swipe Cards Container */}
-      <div className="flex-1 relative max-w-md mx-auto w-full">
-        <div className="absolute inset-0">
-          {DEFAULT_CHARACTERS.map((character, index) => {
-            const isVisible = index >= currentIndex && index < currentIndex + 3;
-            if (!isVisible) return null;
-
-            const offset = index - currentIndex;
-            const scale = 1 - offset * 0.05;
-            const yOffset = offset * 10;
-            const opacity = 1 - offset * 0.3;
-
-            return (
-              <SwipeCard
-                key={character.id}
-                character={character}
-                onSwipe={handleSwipe}
-                onChat={handleChat}
-                style={{
-                  zIndex: 100 - offset,
-                  transform: `scale(${scale}) translateY(${yOffset}px)`,
-                  opacity,
-                  pointerEvents: offset === 0 ? "auto" : "none",
-                }}
-              />
-            );
-          })}
-        </div>
-
-        {/* No more characters */}
-        {currentIndex >= DEFAULT_CHARACTERS.length && (
-          <div className="absolute inset-0 flex items-center justify-center p-8">
-            <div className="text-center space-y-4">
-              <div className="text-6xl">✨</div>
-              <h2 className="text-2xl font-bold text-foreground">You've seen everyone!</h2>
-              <p className="text-muted-foreground">Check your matches or start over</p>
-              <button
-                onClick={() => setCurrentIndex(0)}
-                className="px-6 py-3 bg-gradient-primary text-primary-foreground rounded-full font-semibold hover:shadow-glow transition-all"
-              >
-                Start Over
-              </button>
+      <div className="sticky top-0 z-20 bg-card/80 backdrop-blur-md border-b border-border/50">
+        <div className="flex items-center justify-between p-4 max-w-6xl mx-auto">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
+              <Sparkles className="w-6 h-6 text-primary-foreground" />
             </div>
+            <h1 className="text-2xl font-bold text-foreground">Vibe AI</h1>
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Bottom Info */}
-      <div className="p-4 text-center text-muted-foreground text-sm border-t border-border bg-card">
-        {currentIndex < DEFAULT_CHARACTERS.length ? (
-          <>
-            Swipe left to skip • Swipe right to like • Tap chat to start
-          </>
-        ) : (
-          <>You've seen all {DEFAULT_CHARACTERS.length} characters</>
-        )}
+      {/* Character Grid */}
+      <div className="p-6 max-w-6xl mx-auto">
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-foreground mb-2">Choose Your Character</h2>
+          <p className="text-muted-foreground">Select an AI companion to start chatting</p>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {DEFAULT_CHARACTERS.map((character) => (
+            <div
+              key={character.id}
+              onClick={() => onSelectCharacter(character)}
+              className="group relative bg-card border border-border/50 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:border-primary/50 hover:shadow-glow hover:-translate-y-1"
+            >
+              <div className="p-6">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="text-5xl">{character.avatar}</div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-lg text-foreground mb-1 truncate">{character.name}</h3>
+                    <p className="text-xs text-muted-foreground">{character.messageCount.toLocaleString()} messages</p>
+                  </div>
+                </div>
+                
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{character.description}</p>
+                
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {character.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-3 py-1 text-xs rounded-full bg-primary/10 text-primary border border-primary/20"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <button className="w-full py-2.5 px-4 bg-gradient-primary text-primary-foreground rounded-xl font-semibold transition-all duration-300 group-hover:shadow-glow">
+                  Chat Now
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

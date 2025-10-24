@@ -12,28 +12,25 @@ export const ChatMessage = ({ message, showAvatar = false, avatar }: ChatMessage
 
   return (
     <div className={cn(
-      "flex gap-2 items-end animate-slide-up",
+      "flex gap-3 items-end animate-fade-in",
       isUser ? "justify-end" : "justify-start"
     )}>
       {!isUser && showAvatar && (
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center text-sm flex-shrink-0">
+        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-xl flex-shrink-0">
           {avatar}
         </div>
       )}
-      {!isUser && !showAvatar && <div className="w-8" />}
       
       <div
         className={cn(
-          "max-w-[75%] rounded-2xl px-4 py-2.5 shadow-soft",
+          "max-w-[70%] rounded-2xl px-4 py-3",
           isUser
-            ? "bg-gradient-primary text-primary-foreground rounded-br-sm"
-            : "bg-secondary text-foreground rounded-bl-sm"
+            ? "bg-gradient-primary text-primary-foreground shadow-glow"
+            : "bg-card border border-border/50 text-foreground shadow-soft"
         )}
       >
         <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">{message.content}</p>
       </div>
-      
-      {isUser && <div className="w-8" />}
     </div>
   );
 };
