@@ -161,9 +161,9 @@ export const ChatInterface = ({ character, onBack }: ChatInterfaceProps) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="h-full flex flex-col bg-background">
       {/* Header */}
-      <div className="sticky top-0 z-20 bg-card/80 backdrop-blur-md border-b border-border/50">
+      <div className="sticky top-0 z-20 glass-effect border-b border-border">
         <div className="flex items-center justify-between p-4 max-w-4xl mx-auto">
           <div className="flex items-center gap-3">
             <Button
@@ -251,7 +251,7 @@ export const ChatInterface = ({ character, onBack }: ChatInterfaceProps) => {
       </ScrollArea>
 
       {/* Input */}
-      <div className="border-t border-border/50 bg-card/80 backdrop-blur-md p-4">
+      <div className="border-t border-border glass-effect p-4">
         <form onSubmit={handleSendMessage} className="flex gap-3 max-w-3xl mx-auto">
           <Textarea
             value={input}

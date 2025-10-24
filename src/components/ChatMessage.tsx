@@ -26,7 +26,7 @@ export const ChatMessage = ({ message, showAvatar = false, avatar }: ChatMessage
           "max-w-[70%] rounded-2xl px-4 py-3",
           isUser
             ? "bg-gradient-primary text-primary-foreground shadow-glow"
-            : "bg-card border border-border/50 text-foreground shadow-soft"
+            : "glass-effect text-foreground"
         )}
       >
         <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">{message.content}</p>

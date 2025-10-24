@@ -50,13 +50,17 @@ export default {
       },
       backgroundImage: {
         'gradient-primary': 'var(--gradient-primary)',
+        'gradient-secondary': 'var(--gradient-secondary)',
         'gradient-bg': 'var(--gradient-bg)',
         'gradient-card': 'var(--gradient-card)',
+        'gradient-glass': 'var(--gradient-glass)',
       },
       boxShadow: {
         'soft': 'var(--shadow-soft)',
         'medium': 'var(--shadow-medium)',
         'strong': 'var(--shadow-strong)',
+        'glow': 'var(--shadow-glow)',
+        'glow-purple': 'var(--shadow-glow-purple)',
       },
       borderRadius: {
         lg: "var(--radius)",
