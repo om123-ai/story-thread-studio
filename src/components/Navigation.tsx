@@ -1,15 +1,28 @@
 import { Link, useLocation } from "react-router-dom";
-import { Brain, MessageSquare, Compass, Plus, User } from "lucide-react";
+import { Brain, MessageSquare, Compass, Plus, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export const Navigation = () => {
   const location = useLocation();
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   const navItems = [
-    { path: "/", icon: MessageSquare, label: "Chat" },
+    { path: "/", icon: MessageSquare, label: "Home" },
     { path: "/discover", icon: Compass, label: "Discover" },
     { path: "/create", icon: Plus, label: "Create" },
   ];
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast({
+      title: "Logged out",
+      description: "See you soon!",
+    });
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
@@ -24,27 +37,35 @@ export const Navigation = () => {
             </span>
           </Link>
 
-          <div className="flex items-center gap-2">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path;
-              return (
-                <Link key={item.path} to={item.path}>
-                  <Button
-                    variant={isActive ? "default" : "ghost"}
-                    className={isActive ? "bg-gradient-primary shadow-glow" : "hover:bg-muted"}
-                  >
-                    <Icon className="w-4 h-4 mr-2" />
-                    {item.label}
-                  </Button>
-                </Link>
-              );
-            })}
-          </div>
-
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <User className="w-5 h-5" />
-          </Button>
+          {user && (
+            <div className="flex items-center gap-2">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                return (
+                  <Link key={item.path} to={item.path}>
+                    <Button
+                      variant={isActive ? "default" : "ghost"}
+                      className={isActive ? "bg-gradient-primary shadow-glow" : "hover:bg-muted"}
+                    >
+                      <Icon className="w-4 h-4 mr-2" />
+                      {item.label}
+                    </Button>
+                  </Link>
+                );
+              })}
+              
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleLogout}
+                className="rounded-full"
+                title="Logout"
+              >
+                <LogOut className="w-5 h-5" />
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </nav>
