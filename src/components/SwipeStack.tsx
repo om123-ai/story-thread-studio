@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { SwipeCard } from "./SwipeCard";
-import { Character } from "./CharacterLibrary";
+import { Tables } from "@/integrations/supabase/types";
 import { RotateCcw } from "lucide-react";
 import { Button } from "./ui/button";
+
+type Character = Tables<"characters">;
 
 interface SwipeStackProps {
   characters: Character[];

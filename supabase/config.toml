@@ -1,1 +1,13 @@
 project_id = "zysmcemxpnmqrjcffzif"
+
+[functions.get-characters]
+verify_jwt = false
+
+[functions.create-character]
+verify_jwt = true
+
+[functions.delete-character]
+verify_jwt = true
+
+[functions.chat-stream]
+verify_jwt = true

@@ -6,25 +6,24 @@ export const useCharacters = (category?: string, search?: string) => {
   return useQuery({
     queryKey: ['characters', category, search],
     queryFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        throw new Error('Not authenticated');
+      let query = supabase
+        .from('characters')
+        .select('*')
+        .eq('is_public', true)
+        .order('created_at', { ascending: false });
+
+      if (category && category !== 'All') {
+        query = query.eq('category', category);
       }
 
-      const params = new URLSearchParams();
-      if (category && category !== 'All') params.append('category', category);
-      if (search) params.append('search', search);
+      if (search) {
+        query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%`);
+      }
 
-      const { data, error } = await supabase.functions.invoke('get-characters', {
-        body: {},
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
+      const { data, error } = await query;
 
       if (error) throw error;
-      return data.characters || [];
+      return data || [];
     },
   });
 };

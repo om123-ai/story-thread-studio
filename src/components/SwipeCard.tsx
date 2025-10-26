@@ -1,7 +1,30 @@
 import { useState, useRef } from "react";
-import { Character } from "./CharacterLibrary";
+import { Tables } from "@/integrations/supabase/types";
 import { Heart, X, Star, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+type Character = Tables<"characters">;
+
+// Import character images
+import mrsSharma from "@/assets/characters/mrs-sharma.jpg";
+import anita from "@/assets/characters/anita.jpg";
+import rhea from "@/assets/characters/rhea.jpg";
+import sangeeta from "@/assets/characters/sangeeta.jpg";
+import rekha from "@/assets/characters/rekha.jpg";
+import preeti from "@/assets/characters/preeti.jpg";
+import kavita from "@/assets/characters/kavita.jpg";
+import tanvi from "@/assets/characters/tanvi.jpg";
+
+const characterImages: Record<string, string> = {
+  "mrs-sharma.jpg": mrsSharma,
+  "anita.jpg": anita,
+  "rhea.jpg": rhea,
+  "sangeeta.jpg": sangeeta,
+  "rekha.jpg": rekha,
+  "preeti.jpg": preeti,
+  "kavita.jpg": kavita,
+  "tanvi.jpg": tanvi,
+};
 
 interface SwipeCardProps {
   character: Character;
@@ -81,10 +104,10 @@ export const SwipeCard = ({ character, onSwipe, onChat }: SwipeCardProps) => {
         )}
 
         {/* Background Image */}
-        {(character as any).image_url && (
+        {character.image_url && (
           <div className="absolute inset-0">
             <img
-              src={(character as any).image_url}
+              src={characterImages[character.image_url] || character.image_url}
               alt={character.name}
               className="w-full h-full object-cover"
             />
@@ -95,13 +118,13 @@ export const SwipeCard = ({ character, onSwipe, onChat }: SwipeCardProps) => {
         {/* Content */}
         <div className="relative h-full flex flex-col p-8">
           <div className="flex-1 flex flex-col items-center justify-end text-center pb-8">
-            {!(character as any).image_url && (
+            {!character.image_url && (
               <div className="text-9xl mb-6 animate-float">{character.avatar}</div>
             )}
             <h2 className="text-4xl font-bold text-foreground drop-shadow-lg mb-4">{character.name}</h2>
             <p className="text-lg text-foreground/90 drop-shadow-md mb-6 max-w-md">{character.description}</p>
             <div className="flex flex-wrap gap-3 justify-center mb-4">
-              {character.tags.slice(0, 3).map((tag) => (
+              {character.tags && character.tags.slice(0, 3).map((tag) => (
                 <span
                   key={tag}
                   className="px-4 py-2 text-sm rounded-full glass-effect text-foreground backdrop-blur-md"

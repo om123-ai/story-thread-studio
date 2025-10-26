@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { useCharacters } from "@/hooks/useCharacters";
 import { Loader2, Heart, X } from "lucide-react";
@@ -8,7 +7,7 @@ const Discover = () => {
   const { data: characters = [], isLoading } = useCharacters();
 
   // Filter only Romance category characters for swipe interface
-  const romanceCharacters = characters.filter((char: any) => char.category === "Romance");
+  const romanceCharacters = characters.filter((char) => char.category === "Romance");
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
