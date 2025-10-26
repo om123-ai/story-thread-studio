@@ -11,6 +11,8 @@ const Discover = () => {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   
+  const categories = ["All", "Friend", "Mentor", "Assistant", "Creative", "Fun"];
+  
   const { data: characters = [], isLoading } = useCharacters(
     activeCategory === "All" ? undefined : activeCategory,
     searchQuery || undefined
@@ -29,6 +31,7 @@ const Discover = () => {
         </div>
 
         <FilterBar
+          categories={categories}
           activeCategory={activeCategory}
           onCategoryChange={setActiveCategory}
           searchQuery={searchQuery}
