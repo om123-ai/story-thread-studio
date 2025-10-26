@@ -24,9 +24,12 @@ export type Database = {
           description: string
           emotion: number
           id: string
+          image_url: string | null
           is_public: boolean | null
+          is_seed: boolean | null
           memory: number
           name: string
+          swipe_stats: Json | null
           system_prompt: string
           tags: string[] | null
           updated_at: string | null
@@ -41,9 +44,12 @@ export type Database = {
           description: string
           emotion?: number
           id?: string
+          image_url?: string | null
           is_public?: boolean | null
+          is_seed?: boolean | null
           memory?: number
           name: string
+          swipe_stats?: Json | null
           system_prompt: string
           tags?: string[] | null
           updated_at?: string | null
@@ -58,9 +64,12 @@ export type Database = {
           description?: string
           emotion?: number
           id?: string
+          image_url?: string | null
           is_public?: boolean | null
+          is_seed?: boolean | null
           memory?: number
           name?: string
+          swipe_stats?: Json | null
           system_prompt?: string
           tags?: string[] | null
           updated_at?: string | null
@@ -140,7 +149,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_seed_user_id: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never

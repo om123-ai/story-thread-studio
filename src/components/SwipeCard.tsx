@@ -80,25 +80,36 @@ export const SwipeCard = ({ character, onSwipe, onChat }: SwipeCardProps) => {
           </div>
         )}
 
+        {/* Background Image */}
+        {(character as any).image_url && (
+          <div className="absolute inset-0">
+            <img
+              src={(character as any).image_url}
+              alt={character.name}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+          </div>
+        )}
+
         {/* Content */}
-        <div className="h-full flex flex-col p-8">
-          <div className="flex-1 flex flex-col items-center justify-center text-center">
-            <div className="text-9xl mb-6 animate-float">{character.avatar}</div>
-            <h2 className="text-4xl font-bold text-foreground mb-4">{character.name}</h2>
-            <p className="text-lg text-muted-foreground mb-6 max-w-md">{character.description}</p>
-            <div className="flex flex-wrap gap-3 justify-center mb-6">
-              {character.tags.map((tag) => (
+        <div className="relative h-full flex flex-col p-8">
+          <div className="flex-1 flex flex-col items-center justify-end text-center pb-8">
+            {!(character as any).image_url && (
+              <div className="text-9xl mb-6 animate-float">{character.avatar}</div>
+            )}
+            <h2 className="text-4xl font-bold text-foreground drop-shadow-lg mb-4">{character.name}</h2>
+            <p className="text-lg text-foreground/90 drop-shadow-md mb-6 max-w-md">{character.description}</p>
+            <div className="flex flex-wrap gap-3 justify-center mb-4">
+              {character.tags.slice(0, 3).map((tag) => (
                 <span
                   key={tag}
-                  className="px-4 py-2 text-sm rounded-full glass-effect text-foreground"
+                  className="px-4 py-2 text-sm rounded-full glass-effect text-foreground backdrop-blur-md"
                 >
                   {tag}
                 </span>
               ))}
             </div>
-            <p className="text-sm text-muted-foreground">
-              {character.messageCount.toLocaleString()} conversations
-            </p>
           </div>
 
           <button
