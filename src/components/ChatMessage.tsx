@@ -5,9 +5,10 @@ interface ChatMessageProps {
   message: Message;
   showAvatar?: boolean;
   avatar?: string;
+  avatarImage?: string;
 }
 
-export const ChatMessage = ({ message, showAvatar = false, avatar }: ChatMessageProps) => {
+export const ChatMessage = ({ message, showAvatar = false, avatar, avatarImage }: ChatMessageProps) => {
   const isUser = message.role === "user";
 
   return (
@@ -16,9 +17,17 @@ export const ChatMessage = ({ message, showAvatar = false, avatar }: ChatMessage
       isUser ? "justify-end" : "justify-start"
     )}>
       {!isUser && showAvatar && (
-        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-xl flex-shrink-0">
-          {avatar}
-        </div>
+        avatarImage ? (
+          <img 
+            src={avatarImage} 
+            alt="Character"
+            className="w-9 h-9 rounded-full object-cover flex-shrink-0"
+          />
+        ) : (
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-xl flex-shrink-0">
+            {avatar}
+          </div>
+        )
       )}
       
       <div

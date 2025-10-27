@@ -10,6 +10,27 @@ import { TypingIndicator } from "@/components/TypingIndicator";
 import { ArrowLeft, Send, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+// Import character images
+import mrsSharma from "@/assets/characters/mrs-sharma.jpg";
+import anita from "@/assets/characters/anita.jpg";
+import rhea from "@/assets/characters/rhea.jpg";
+import sangeeta from "@/assets/characters/sangeeta.jpg";
+import rekha from "@/assets/characters/rekha.jpg";
+import preeti from "@/assets/characters/preeti.jpg";
+import kavita from "@/assets/characters/kavita.jpg";
+import tanvi from "@/assets/characters/tanvi.jpg";
+
+const characterImages: Record<string, string> = {
+  "mrs-sharma.jpg": mrsSharma,
+  "anita.jpg": anita,
+  "rhea.jpg": rhea,
+  "sangeeta.jpg": sangeeta,
+  "rekha.jpg": rekha,
+  "preeti.jpg": preeti,
+  "kavita.jpg": kavita,
+  "tanvi.jpg": tanvi,
+};
+
 const Chat = () => {
   const { characterId } = useParams();
   const navigate = useNavigate();
@@ -134,62 +155,89 @@ const Chat = () => {
     );
   }
 
+  const characterImageUrl = character?.image_url 
+    ? characterImages[character.image_url] || character.image_url 
+    : null;
+
   return (
-    <div className="min-h-screen bg-gradient-subtle flex flex-col">
-      <Navigation />
+    <div className="min-h-screen relative flex flex-col">
+      {/* Background Image with Overlay */}
+      {characterImageUrl && (
+        <div className="fixed inset-0 z-0">
+          <img 
+            src={characterImageUrl} 
+            alt={character?.name}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-background/95 backdrop-blur-sm" />
+        </div>
+      )}
       
-      <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
-        <div className="p-4 border-b border-border/50 glass-effect flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/discover')}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-2xl">
-              {character?.avatar}
-            </div>
-            <div>
-              <h2 className="font-semibold">{character?.name}</h2>
-              <p className="text-xs text-muted-foreground">{character?.category}</p>
+      <div className="relative z-10 min-h-screen flex flex-col">
+        <Navigation />
+        
+        <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
+          <div className="p-4 border-b border-border/50 glass-effect flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate('/discover')}>
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <div className="flex items-center gap-3">
+              {characterImageUrl ? (
+                <img 
+                  src={characterImageUrl} 
+                  alt={character?.name}
+                  className="w-10 h-10 rounded-xl object-cover"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-2xl">
+                  {character?.avatar}
+                </div>
+              )}
+              <div>
+                <h2 className="font-semibold">{character?.name}</h2>
+                <p className="text-xs text-muted-foreground">{character?.category}</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
-          {messages.map((msg, idx) => (
-            <ChatMessage
-              key={idx}
-              message={msg}
-              showAvatar={!idx || messages[idx - 1]?.role !== msg.role}
-              avatar={msg.role === 'assistant' ? character?.avatar : undefined}
-            />
-          ))}
-          {isStreaming && <TypingIndicator />}
-          <div ref={messagesEndRef} />
-        </div>
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            {messages.map((msg, idx) => (
+              <ChatMessage
+                key={idx}
+                message={msg}
+                showAvatar={!idx || messages[idx - 1]?.role !== msg.role}
+                avatar={msg.role === 'assistant' ? character?.avatar : undefined}
+                avatarImage={msg.role === 'assistant' ? characterImageUrl : undefined}
+              />
+            ))}
+            {isStreaming && <TypingIndicator />}
+            <div ref={messagesEndRef} />
+          </div>
 
-        <div className="p-4 border-t border-border/50 glass-effect">
-          <div className="flex gap-2">
-            <Textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSend();
-                }
-              }}
-              placeholder="Type a message..."
-              className="min-h-[60px] resize-none"
-              disabled={isStreaming}
-            />
-            <Button
-              onClick={handleSend}
-              disabled={!input.trim() || isStreaming}
-              className="bg-gradient-primary shadow-glow"
-              size="icon"
-            >
-              <Send className="w-5 h-5" />
-            </Button>
+          <div className="p-4 border-t border-border/50 glass-effect">
+            <div className="flex gap-2">
+              <Textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+                placeholder="Type a message..."
+                className="min-h-[60px] resize-none"
+                disabled={isStreaming}
+              />
+              <Button
+                onClick={handleSend}
+                disabled={!input.trim() || isStreaming}
+                className="bg-gradient-primary shadow-glow"
+                size="icon"
+              >
+                <Send className="w-5 h-5" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
