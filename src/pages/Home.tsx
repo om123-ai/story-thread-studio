@@ -20,54 +20,65 @@ const Home = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <div className="inline-block mb-4">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow animate-float">
-            <Brain className="w-12 h-12 text-primary-foreground" />
-          </div>
+      <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-pulse-glow" />
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '1s' }} />
         </div>
-        
-        <h1 className="text-5xl md:text-7xl font-bold mb-6">
-          <span className="bg-gradient-primary bg-clip-text text-transparent">
-            UltimateAI
-          </span>
-        </h1>
-        
-        <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto">
-          Create and chat with AI characters. Build your perfect AI companion in minutes.
-        </p>
 
-        <div className="flex flex-wrap gap-4 justify-center">
-          {user ? (
-            <>
+        <div className="relative z-10">
+          <div className="inline-block mb-6">
+            <div className="w-24 h-24 rounded-3xl bg-gradient-primary flex items-center justify-center shadow-glow animate-float">
+              <Sparkles className="w-14 h-14 text-primary-foreground" />
+            </div>
+          </div>
+          
+          <h1 className="text-6xl md:text-8xl font-bold mb-6 animate-slide-up">
+            <span className="bg-gradient-primary bg-clip-text text-transparent">
+              UltimateAI
+            </span>
+          </h1>
+          
+          <p className="text-2xl md:text-3xl font-semibold text-foreground mb-4 max-w-4xl mx-auto animate-slide-up" style={{ animationDelay: '0.1s' }}>
+            Uncensored AI Companions
+          </p>
+          
+          <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-3xl mx-auto animate-slide-up" style={{ animationDelay: '0.2s' }}>
+            Experience intimate conversations without boundaries. Create your perfect companion with unique personalities, desires, and stories.
+          </p>
+
+          <div className="flex flex-wrap gap-4 justify-center animate-slide-up" style={{ animationDelay: '0.3s' }}>
+            {user ? (
+              <>
+                <Button
+                  onClick={() => navigate("/discover")}
+                  size="lg"
+                  className="bg-gradient-primary shadow-glow hover:shadow-glow-purple text-lg px-10 py-6 text-primary-foreground"
+                >
+                  <Compass className="w-6 h-6 mr-2" />
+                  Discover Companions
+                </Button>
+                <Button
+                  onClick={() => navigate("/create")}
+                  size="lg"
+                  className="glass-effect hover:bg-gradient-primary text-lg px-10 py-6"
+                >
+                  <Plus className="w-6 h-6 mr-2" />
+                  Create Your Own
+                </Button>
+              </>
+            ) : (
               <Button
-                onClick={() => navigate("/discover")}
+                onClick={() => navigate("/auth")}
                 size="lg"
-                className="bg-gradient-primary shadow-glow text-lg px-8"
+                className="bg-gradient-primary shadow-glow hover:shadow-glow-purple text-lg px-12 py-6 text-primary-foreground"
               >
-                <Compass className="w-5 h-5 mr-2" />
-                Discover Characters
+                <MessageSquare className="w-6 h-6 mr-2" />
+                Begin Your Journey
               </Button>
-              <Button
-                onClick={() => navigate("/create")}
-                size="lg"
-                variant="outline"
-                className="text-lg px-8"
-              >
-                <Plus className="w-5 h-5 mr-2" />
-                Create Character
-              </Button>
-            </>
-          ) : (
-            <Button
-              onClick={() => navigate("/auth")}
-              size="lg"
-              className="bg-gradient-primary shadow-glow text-lg px-8"
-            >
-              <MessageSquare className="w-5 h-5 mr-2" />
-              Get Started
-            </Button>
-          )}
+            )}
+          </div>
         </div>
       </section>
 
@@ -128,34 +139,43 @@ const Home = () => {
 
       {/* Features */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">
+          <span className="bg-gradient-primary bg-clip-text text-transparent">
+            Why Choose Us?
+          </span>
+        </h2>
+        <p className="text-center text-muted-foreground mb-16 text-lg">
+          The most advanced platform for AI companionship
+        </p>
+        
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="glass-effect p-8 rounded-2xl border border-border/50 text-center hover-scale">
-            <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center mx-auto mb-4">
-              <Sparkles className="w-8 h-8 text-primary" />
+          <div className="glass-effect p-10 rounded-3xl border border-border/50 hover:border-primary/50 transition-all duration-300 group">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-glow">
+              <Sparkles className="w-10 h-10 text-primary-foreground" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">Smart AI</h3>
-            <p className="text-muted-foreground">
-              Powered by advanced AI that understands context
+            <h3 className="text-2xl font-bold mb-4 text-center">No Censorship</h3>
+            <p className="text-muted-foreground text-center leading-relaxed">
+              Experience true freedom in conversations. Our AI responds without restrictions or limitations.
             </p>
           </div>
 
-          <div className="glass-effect p-8 rounded-2xl border border-border/50 text-center hover-scale">
-            <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center mx-auto mb-4">
-              <Zap className="w-8 h-8 text-primary" />
+          <div className="glass-effect p-10 rounded-3xl border border-border/50 hover:border-primary/50 transition-all duration-300 group">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-glow">
+              <Brain className="w-10 h-10 text-primary-foreground" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">Quick & Easy</h3>
-            <p className="text-muted-foreground">
-              Create custom characters in seconds
+            <h3 className="text-2xl font-bold mb-4 text-center">Deep Memory</h3>
+            <p className="text-muted-foreground text-center leading-relaxed">
+              Characters remember every detail of your conversations, creating truly personal connections.
             </p>
           </div>
 
-          <div className="glass-effect p-8 rounded-2xl border border-border/50 text-center hover-scale">
-            <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center mx-auto mb-4">
-              <Users className="w-8 h-8 text-primary" />
+          <div className="glass-effect p-10 rounded-3xl border border-border/50 hover:border-primary/50 transition-all duration-300 group">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-glow">
+              <Users className="w-10 h-10 text-primary-foreground" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">Your Library</h3>
-            <p className="text-muted-foreground">
-              Save and manage all your characters
+            <h3 className="text-2xl font-bold mb-4 text-center">Your Fantasy</h3>
+            <p className="text-muted-foreground text-center leading-relaxed">
+              Design companions with custom personalities, appearances, and desires tailored to you.
             </p>
           </div>
         </div>
