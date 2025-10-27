@@ -35,7 +35,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const { name, description, avatar, category, tags, creativity, emotion, memory, aiModel } = await req.json();
+    const { name, description, avatar, category, tags, creativity, emotion, memory, aiModel, imageUrl } = await req.json();
 
     if (!name || !description || !avatar || !category) {
       return new Response(
@@ -70,7 +70,8 @@ Deno.serve(async (req) => {
         memory: memory || 50,
         system_prompt: systemPrompt,
         ai_model: aiModel || 'google/gemini-2.5-flash',
-        is_public: false
+        is_public: true,
+        image_url: imageUrl || null
       })
       .select()
       .single();

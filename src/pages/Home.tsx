@@ -2,11 +2,18 @@ import { Navigation } from "@/components/Navigation";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Brain, MessageSquare, Compass, Plus, Sparkles, Zap, Users } from "lucide-react";
+import { Brain, MessageSquare, Compass, Plus, Sparkles, Zap, Users, Search } from "lucide-react";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { useCharacters } from "@/hooks/useCharacters";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const Home = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const { data: characters } = useCharacters("", searchQuery);
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -63,6 +70,61 @@ const Home = () => {
           )}
         </div>
       </section>
+
+      {/* Search Section */}
+      {user && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+          <div className="glass-effect p-8 rounded-2xl border border-border/50">
+            <h2 className="text-2xl font-bold mb-6">Search Characters</h2>
+            <div className="relative mb-6">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by character name..."
+                className="pl-12 h-12"
+              />
+            </div>
+            
+            {searchQuery && characters && characters.length > 0 && (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {characters.map((char) => (
+                  <Card 
+                    key={char.id}
+                    className="p-4 cursor-pointer hover:scale-105 transition-transform"
+                    onClick={() => navigate(`/chat?characterId=${char.id}`)}
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      {char.image_url ? (
+                        <img 
+                          src={char.image_url} 
+                          alt={char.name}
+                          className="w-12 h-12 rounded-lg object-cover"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-2xl">
+                          {char.avatar}
+                        </div>
+                      )}
+                      <div>
+                        <h3 className="font-semibold">{char.name}</h3>
+                        <Badge variant="secondary" className="text-xs">{char.category}</Badge>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {char.description}
+                    </p>
+                  </Card>
+                ))}
+              </div>
+            )}
+            
+            {searchQuery && characters && characters.length === 0 && (
+              <p className="text-center text-muted-foreground">No characters found</p>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* Features */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">

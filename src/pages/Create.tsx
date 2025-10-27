@@ -9,33 +9,42 @@ import { Slider } from "@/components/ui/slider";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useCreateCharacter } from "@/hooks/useCharacters";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, Upload, X } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
-const AVATAR_OPTIONS = ["🤖", "👨", "👩", "🧙", "🦸", "🐱", "🦊", "🦁", "🐼", "🐨"];
 const TAG_OPTIONS = [
-  "Friendly",
-  "Helpful",
-  "Creative",
-  "Analytical",
-  "Humorous",
-  "Professional",
-  "Casual",
-  "Empathetic",
+  "Flirty",
+  "Romantic",
+  "Seductive",
+  "Dominant",
+  "Submissive",
+  "Playful",
+  "Passionate",
+  "Adventurous",
+  "Caring",
+  "Bold",
+  "Mysterious",
+  "Sweet",
 ];
-const CATEGORIES = ["Fantasy", "Sci-Fi", "Professional", "Casual", "Educational", "Entertainment"];
+const CATEGORIES = ["Romance", "Fantasy", "Casual", "Adventure", "Roleplay", "Entertainment"];
 
 const Create = () => {
   const navigate = useNavigate();
   const createCharacter = useCreateCharacter();
+  const { toast } = useToast();
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [characterData, setCharacterData] = useState({
     name: "",
     description: "",
     avatar: "🤖",
-    category: "Casual",
+    category: "Romance",
     tags: [] as string[],
     creativity: 50,
     emotion: 50,
     memory: 50,
+    imageUrl: null as string | null,
   });
 
   const toggleTag = (tag: string) => {
@@ -45,6 +54,59 @@ const Create = () => {
         ? prev.tags.filter((t) => t !== tag)
         : [...prev.tags, tag],
     }));
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid file",
+        description: "Please upload an image file",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError, data } = await supabase.storage
+        .from('character-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('character-images')
+        .getPublicUrl(filePath);
+
+      setCharacterData({ ...characterData, imageUrl: publicUrl });
+      setImagePreview(publicUrl);
+      
+      toast({
+        title: "Image uploaded",
+        description: "Your character image has been uploaded successfully",
+      });
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast({
+        title: "Upload failed",
+        description: "Failed to upload image. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeImage = () => {
+    setImagePreview(null);
+    setCharacterData({ ...characterData, imageUrl: null });
   };
 
   const handleCreate = async () => {
@@ -61,6 +123,7 @@ const Create = () => {
       creativity: characterData.creativity,
       emotion: characterData.emotion,
       memory: characterData.memory,
+      imageUrl: characterData.imageUrl,
     });
 
     navigate("/discover");
@@ -79,24 +142,40 @@ const Create = () => {
             </h1>
 
             <div className="space-y-6">
-              {/* Avatar */}
+              {/* Image Upload */}
               <div className="space-y-2">
-                <Label>Avatar</Label>
-                <div className="flex flex-wrap gap-2">
-                  {AVATAR_OPTIONS.map((emoji) => (
-                    <button
-                      key={emoji}
-                      onClick={() => setCharacterData({ ...characterData, avatar: emoji })}
-                      className={`text-3xl w-14 h-14 rounded-xl border-2 transition-all hover:scale-110 ${
-                        characterData.avatar === emoji
-                          ? "border-primary bg-primary/20"
-                          : "border-border"
-                      }`}
+                <Label>Character Image</Label>
+                {imagePreview ? (
+                  <div className="relative">
+                    <img 
+                      src={imagePreview} 
+                      alt="Character preview" 
+                      className="w-full h-48 object-cover rounded-xl"
+                    />
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-2 right-2"
+                      onClick={removeImage}
                     >
-                      {emoji}
-                    </button>
-                  ))}
-                </div>
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-border rounded-xl cursor-pointer hover:bg-muted/50 transition-colors">
+                    <Upload className="w-10 h-10 text-muted-foreground mb-2" />
+                    <span className="text-sm text-muted-foreground">
+                      {uploading ? "Uploading..." : "Click to upload image"}
+                    </span>
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                    />
+                  </label>
+                )}
               </div>
 
               {/* Name */}
@@ -225,9 +304,17 @@ const Create = () => {
             
             <div className="space-y-6">
               <div className="flex items-center gap-4">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-4xl">
-                  {characterData.avatar}
-                </div>
+                {imagePreview ? (
+                  <img 
+                    src={imagePreview} 
+                    alt="Character preview"
+                    className="w-20 h-20 rounded-2xl object-cover"
+                  />
+                ) : (
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                    <Upload className="w-8 h-8 text-muted-foreground" />
+                  </div>
+                )}
                 <div>
                   <h3 className="text-xl font-semibold">
                     {characterData.name || "Character Name"}
