@@ -6,8 +6,8 @@ import { SwipeStack } from "@/components/SwipeStack";
 const Discover = () => {
   const { data: characters = [], isLoading } = useCharacters();
 
-  // Show all coding assistants in swipe interface
-  const codingCharacters = characters;
+  // Filter only Romance category characters for swipe interface
+  const romanceCharacters = characters.filter((char) => char.category === "Romance");
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -15,10 +15,10 @@ const Discover = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-cyber bg-clip-text text-transparent">
-            Discover Coding Assistants
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-primary bg-clip-text text-transparent">
+            Discover Your Match
           </h1>
-          <p className="text-muted-foreground">Swipe to find your perfect AI coding companion</p>
+          <p className="text-muted-foreground">Swipe to find your perfect AI companion</p>
         </div>
 
         {/* Swipe Instructions */}
@@ -41,12 +41,12 @@ const Discover = () => {
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
-        ) : codingCharacters.length === 0 ? (
+        ) : romanceCharacters.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-muted-foreground text-lg">No coding assistants available yet!</p>
+            <p className="text-muted-foreground text-lg">No characters available yet!</p>
           </div>
         ) : (
-          <SwipeStack characters={codingCharacters} />
+          <SwipeStack characters={romanceCharacters} />
         )}
       </div>
     </div>

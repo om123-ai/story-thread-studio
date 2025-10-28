@@ -14,20 +14,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 const TAG_OPTIONS = [
-  "Patient Teacher",
-  "Code Optimizer",
-  "Debug Expert",
-  "Creative Problem Solver",
-  "Best Practices Advocate",
-  "Performance Focused",
-  "Security Conscious",
-  "Documentation Lover",
-  "TDD Enthusiast",
-  "Agile Coach",
-  "Quick Responder",
-  "Detailed Explainer",
+  "Flirty",
+  "Romantic",
+  "Seductive",
+  "Dominant",
+  "Submissive",
+  "Playful",
+  "Passionate",
+  "Adventurous",
+  "Caring",
+  "Bold",
+  "Mysterious",
+  "Sweet",
 ];
-const CATEGORIES = ["Frontend", "Backend", "Full-Stack", "AI/ML", "Mobile", "DevOps", "Data Science"];
+const CATEGORIES = ["Romance", "Fantasy", "Casual", "Adventure", "Roleplay", "Entertainment"];
 
 const Create = () => {
   const navigate = useNavigate();
@@ -38,15 +38,14 @@ const Create = () => {
   const [characterData, setCharacterData] = useState({
     name: "",
     description: "",
-    avatar: "💻",
-    category: "Full-Stack",
+    avatar: "🤖",
+    category: "Romance",
     tags: [] as string[],
     creativity: 50,
     emotion: 50,
     memory: 50,
     imageUrl: null as string | null,
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const toggleTag = (tag: string) => {
     setCharacterData((prev) => ({
@@ -61,23 +60,10 @@ const Create = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
-    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!validTypes.includes(file.type)) {
+    if (!file.type.startsWith('image/')) {
       toast({
-        title: "Invalid file type",
-        description: "Please upload a JPEG, PNG, or WebP image",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024;
-    if (file.size > maxSize) {
-      toast({
-        title: "File too large",
-        description: "Image must be less than 5MB",
+        title: "Invalid file",
+        description: "Please upload an image file",
         variant: "destructive",
       });
       return;
@@ -101,7 +87,6 @@ const Create = () => {
 
       setCharacterData({ ...characterData, imageUrl: publicUrl });
       setImagePreview(publicUrl);
-      setErrors({ ...errors, imageUrl: "" });
       
       toast({
         title: "Image uploaded",
@@ -114,7 +99,6 @@ const Create = () => {
         description: "Failed to upload image. Please try again.",
         variant: "destructive",
       });
-      setErrors({ ...errors, imageUrl: "Failed to upload image" });
     } finally {
       setUploading(false);
     }
@@ -126,58 +110,23 @@ const Create = () => {
   };
 
   const handleCreate = async () => {
-    // Validate inputs
-    const newErrors: Record<string, string> = {};
-    
-    if (!characterData.name || characterData.name.length < 3) {
-      newErrors.name = "Name must be at least 3 characters";
-    }
-    if (characterData.name.length > 50) {
-      newErrors.name = "Name must be less than 50 characters";
-    }
-    if (!characterData.description || characterData.description.length < 20) {
-      newErrors.description = "Description must be at least 20 characters";
-    }
-    if (characterData.description.length > 500) {
-      newErrors.description = "Description must be less than 500 characters";
-    }
-    if (characterData.tags.length > 5) {
-      newErrors.tags = "Maximum 5 personality traits allowed";
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      toast({
-        title: "Validation Error",
-        description: "Please fix the errors before creating your character",
-        variant: "destructive",
-      });
+    if (!characterData.name || !characterData.description) {
       return;
     }
 
-    setErrors({});
-    
-    try {
-      await createCharacter.mutateAsync({
-        name: characterData.name,
-        description: characterData.description,
-        avatar: characterData.avatar,
-        category: characterData.category,
-        tags: characterData.tags,
-        creativity: characterData.creativity,
-        emotion: characterData.emotion,
-        memory: characterData.memory,
-        imageUrl: characterData.imageUrl,
-      });
+    await createCharacter.mutateAsync({
+      name: characterData.name,
+      description: characterData.description,
+      avatar: characterData.avatar,
+      category: characterData.category,
+      tags: characterData.tags,
+      creativity: characterData.creativity,
+      emotion: characterData.emotion,
+      memory: characterData.memory,
+      imageUrl: characterData.imageUrl,
+    });
 
-      navigate("/discover");
-    } catch (error) {
-      toast({
-        title: "Creation Failed",
-        description: "Failed to create character. Please try again.",
-        variant: "destructive",
-      });
-    }
+    navigate("/discover");
   };
 
   return (
@@ -235,19 +184,14 @@ const Create = () => {
                 <Input
                   id="name"
                   value={characterData.name}
-                  onChange={(e) => {
-                    setCharacterData({ ...characterData, name: e.target.value });
-                    setErrors({ ...errors, name: "" });
-                  }}
+                  onChange={(e) => setCharacterData({ ...characterData, name: e.target.value })}
                   placeholder="Enter character name"
-                  className={errors.name ? "border-destructive" : ""}
                 />
-                {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
               </div>
 
               {/* Category */}
               <div className="space-y-2">
-                <Label htmlFor="category">Expertise Area</Label>
+                <Label htmlFor="category">Category</Label>
                 <select
                   id="category"
                   value={characterData.category}
@@ -270,51 +214,35 @@ const Create = () => {
                 <Textarea
                   id="description"
                   value={characterData.description}
-                  onChange={(e) => {
-                    setCharacterData({ ...characterData, description: e.target.value });
-                    setErrors({ ...errors, description: "" });
-                  }}
-                  placeholder="Describe your coding assistant's expertise and teaching style..."
+                  onChange={(e) =>
+                    setCharacterData({ ...characterData, description: e.target.value })
+                  }
+                  placeholder="Describe your character..."
                   rows={4}
-                  className={errors.description ? "border-destructive" : ""}
                 />
-                {errors.description && <p className="text-sm text-destructive">{errors.description}</p>}
               </div>
 
               {/* Tags */}
               <div className="space-y-2">
-                <Label>Personality Traits (max 5)</Label>
+                <Label>Personality Tags</Label>
                 <div className="flex flex-wrap gap-2">
                   {TAG_OPTIONS.map((tag) => (
                     <Badge
                       key={tag}
                       variant={characterData.tags.includes(tag) ? "default" : "outline"}
                       className="cursor-pointer hover:scale-105 transition-transform"
-                      onClick={() => {
-                        if (characterData.tags.length >= 5 && !characterData.tags.includes(tag)) {
-                          toast({
-                            title: "Maximum reached",
-                            description: "You can select up to 5 traits",
-                            variant: "destructive",
-                          });
-                          return;
-                        }
-                        toggleTag(tag);
-                        setErrors({ ...errors, tags: "" });
-                      }}
+                      onClick={() => toggleTag(tag)}
                     >
                       {tag}
                     </Badge>
                   ))}
                 </div>
-                {errors.tags && <p className="text-sm text-destructive">{errors.tags}</p>}
               </div>
 
               {/* Sliders */}
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Code Creativity: {characterData.creativity}%</Label>
-                  <p className="text-xs text-muted-foreground">Conservative vs Experimental approaches</p>
+                  <Label>Creativity: {characterData.creativity}%</Label>
                   <Slider
                     value={[characterData.creativity]}
                     onValueChange={([value]) =>
@@ -326,8 +254,7 @@ const Create = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Empathy: {characterData.emotion}%</Label>
-                  <p className="text-xs text-muted-foreground">Patience level and teaching style</p>
+                  <Label>Emotion: {characterData.emotion}%</Label>
                   <Slider
                     value={[characterData.emotion]}
                     onValueChange={([value]) =>
@@ -339,8 +266,7 @@ const Create = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Context Awareness: {characterData.memory}%</Label>
-                  <p className="text-xs text-muted-foreground">Project context retention</p>
+                  <Label>Memory: {characterData.memory}%</Label>
                   <Slider
                     value={[characterData.memory]}
                     onValueChange={([value]) =>

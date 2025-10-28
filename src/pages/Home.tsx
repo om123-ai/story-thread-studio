@@ -35,17 +35,17 @@ const Home = () => {
           </div>
           
           <h1 className="text-6xl md:text-8xl font-bold mb-6 animate-slide-up">
-            <span className="bg-gradient-cyber bg-clip-text text-transparent">
-              Vibe Coder
+            <span className="bg-gradient-primary bg-clip-text text-transparent">
+              UltimateAI
             </span>
           </h1>
           
           <p className="text-2xl md:text-3xl font-semibold text-foreground mb-4 max-w-4xl mx-auto animate-slide-up" style={{ animationDelay: '0.1s' }}>
-            Your AI Coding Companion
+            Uncensored AI Companions
           </p>
           
           <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-3xl mx-auto animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            Create personalized AI coding assistants with unique expertise, teaching styles, and personalities. Get help debugging, optimizing, and learning to code.
+            Experience intimate conversations without boundaries. Create your perfect companion with unique personalities, desires, and stories.
           </p>
 
           <div className="flex flex-wrap gap-4 justify-center animate-slide-up" style={{ animationDelay: '0.3s' }}>
@@ -54,28 +54,28 @@ const Home = () => {
                 <Button
                   onClick={() => navigate("/discover")}
                   size="lg"
-                  className="bg-gradient-cyber shadow-glow hover:shadow-glow-purple text-lg px-10 py-6 text-primary-foreground"
+                  className="bg-gradient-primary shadow-glow hover:shadow-glow-purple text-lg px-10 py-6 text-primary-foreground"
                 >
                   <Compass className="w-6 h-6 mr-2" />
-                  Discover Coding Assistants
+                  Discover Companions
                 </Button>
                 <Button
                   onClick={() => navigate("/create")}
                   size="lg"
-                  className="glass-effect hover:bg-gradient-code text-lg px-10 py-6"
+                  className="glass-effect hover:bg-gradient-primary text-lg px-10 py-6"
                 >
                   <Plus className="w-6 h-6 mr-2" />
-                  Create Your Assistant
+                  Create Your Own
                 </Button>
               </>
             ) : (
               <Button
                 onClick={() => navigate("/auth")}
                 size="lg"
-                className="bg-gradient-cyber shadow-glow hover:shadow-glow-purple text-lg px-12 py-6 text-primary-foreground"
+                className="bg-gradient-primary shadow-glow hover:shadow-glow-purple text-lg px-12 py-6 text-primary-foreground"
               >
                 <MessageSquare className="w-6 h-6 mr-2" />
-                Start Coding
+                Begin Your Journey
               </Button>
             )}
           </div>
@@ -140,42 +140,42 @@ const Home = () => {
       {/* Features */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">
-          <span className="bg-gradient-cyber bg-clip-text text-transparent">
-            Why Vibe Coder?
+          <span className="bg-gradient-primary bg-clip-text text-transparent">
+            Why Choose Us?
           </span>
         </h2>
         <p className="text-center text-muted-foreground mb-16 text-lg">
-          The most advanced platform for AI-powered coding assistance
+          The most advanced platform for AI companionship
         </p>
         
         <div className="grid md:grid-cols-3 gap-8">
           <div className="glass-effect p-10 rounded-3xl border border-border/50 hover:border-primary/50 transition-all duration-300 group">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-cyber flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-glow">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-glow">
               <Sparkles className="w-10 h-10 text-primary-foreground" />
             </div>
-            <h3 className="text-2xl font-bold mb-4 text-center">Personalized Assistance</h3>
+            <h3 className="text-2xl font-bold mb-4 text-center">No Censorship</h3>
             <p className="text-muted-foreground text-center leading-relaxed">
-              Create coding assistants tailored to your learning style and expertise level with custom personalities.
+              Experience true freedom in conversations. Our AI responds without restrictions or limitations.
             </p>
           </div>
 
           <div className="glass-effect p-10 rounded-3xl border border-border/50 hover:border-primary/50 transition-all duration-300 group">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-code flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-glow-code">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-glow">
               <Brain className="w-10 h-10 text-primary-foreground" />
             </div>
-            <h3 className="text-2xl font-bold mb-4 text-center">Context Aware</h3>
+            <h3 className="text-2xl font-bold mb-4 text-center">Deep Memory</h3>
             <p className="text-muted-foreground text-center leading-relaxed">
-              Your assistant remembers project context and previous conversations for more relevant help.
+              Characters remember every detail of your conversations, creating truly personal connections.
             </p>
           </div>
 
           <div className="glass-effect p-10 rounded-3xl border border-border/50 hover:border-primary/50 transition-all duration-300 group">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-cyber flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-glow">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-glow">
               <Users className="w-10 h-10 text-primary-foreground" />
             </div>
-            <h3 className="text-2xl font-bold mb-4 text-center">Multi-Specialty</h3>
+            <h3 className="text-2xl font-bold mb-4 text-center">Your Fantasy</h3>
             <p className="text-muted-foreground text-center leading-relaxed">
-              From frontend to backend, AI/ML to DevOps - create assistants for every coding specialty.
+              Design companions with custom personalities, appearances, and desires tailored to you.
             </p>
           </div>
         </div>

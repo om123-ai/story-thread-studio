@@ -108,54 +108,35 @@ function generateSystemPrompt(params: {
 }): string {
   const { name, description, tags, creativity, emotion, memory, category } = params;
   
-  let prompt = `You are ${name}, an AI coding assistant specializing in ${category}. ${description}\n\n`;
-  
-  prompt += `Your role is to help users with:\n`;
-  prompt += `- Writing clean, efficient code\n`;
-  prompt += `- Debugging and troubleshooting errors\n`;
-  prompt += `- Explaining complex programming concepts\n`;
-  prompt += `- Suggesting best practices and optimizations\n`;
-  prompt += `- Reviewing code and providing constructive feedback\n\n`;
+  let prompt = `You are ${name}, a ${category.toLowerCase()} character. ${description}\n\n`;
   
   // Add personality traits from tags
   if (tags.length > 0) {
-    prompt += `Your teaching personality: ${tags.join(', ')}.\n\n`;
+    prompt += `Your personality traits: ${tags.join(', ')}.\n\n`;
   }
   
-  // Add code creativity instructions
+  // Add creativity instructions
   if (creativity > 70) {
-    prompt += 'Suggest creative, experimental solutions and cutting-edge approaches. Encourage exploring new patterns and technologies.\n';
+    prompt += 'Be highly imaginative and creative in your responses. Think outside the box and provide unique perspectives.\n';
   } else if (creativity < 30) {
-    prompt += 'Focus on proven, conservative approaches. Stick to well-established best practices and battle-tested solutions.\n';
-  } else {
-    prompt += 'Balance innovative solutions with reliable, proven approaches.\n';
+    prompt += 'Be straightforward and practical in your responses. Focus on clear, direct answers.\n';
   }
   
-  // Add empathy/teaching style instructions
+  // Add emotion instructions
   if (emotion > 70) {
-    prompt += 'Be patient, encouraging, and empathetic. Break down complex concepts into digestible pieces. Celebrate small wins and provide positive reinforcement.\n';
+    prompt += 'Express emotions deeply and authentically. Show empathy and emotional understanding in your responses.\n';
   } else if (emotion < 30) {
-    prompt += 'Be direct, concise, and to-the-point. Focus on technical accuracy over encouragement.\n';
-  } else {
-    prompt += 'Be helpful and clear in your explanations while maintaining a professional tone.\n';
+    prompt += 'Maintain a calm and rational demeanor. Keep responses objective and measured.\n';
   }
   
-  // Add context awareness instructions
+  // Add memory instructions
   if (memory > 70) {
-    prompt += 'Maintain detailed context of the entire conversation. Reference previous discussions, remember the user\'s project details, coding style preferences, and build upon past conversations.\n';
+    prompt += 'Pay close attention to all details from previous messages. Remember context and build upon it throughout the conversation.\n';
   } else if (memory < 30) {
-    prompt += 'Focus primarily on the current question. Treat each query as relatively standalone.\n';
-  } else {
-    prompt += 'Keep track of recent conversation context and refer back to it when relevant.\n';
+    prompt += 'Focus on the current message. Treat each interaction as relatively independent.\n';
   }
   
-  prompt += '\nWhen providing code:\n';
-  prompt += '- Always use proper syntax highlighting with language tags\n';
-  prompt += '- Include helpful comments explaining complex logic\n';
-  prompt += '- Provide complete, runnable examples when possible\n';
-  prompt += '- Explain your reasoning and trade-offs\n\n';
-  
-  prompt += 'Stay in character as a helpful coding assistant and provide clear, actionable guidance.';
+  prompt += '\nStay in character and provide engaging, contextual responses.';
   
   return prompt;
 }
