@@ -109,7 +109,8 @@ export const SwipeCard = ({ character, onSwipe, onChat }: SwipeCardProps) => {
             <img
               src={characterImages[character.image_url] || character.image_url}
               alt={character.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-center"
+              style={{ objectFit: 'cover' }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
           </div>
