@@ -1,12 +1,12 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "jsr:@supabase/supabase-js@2";
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-Deno.serve(async (req) => {
+serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -23,18 +23,20 @@ Deno.serve(async (req) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY')!;
-    
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const openaiApiKey = Deno.env.get('OPENAI_API_KEY')!;
 
     // Get character details
-    const { data: character, error: charError } = await supabase
-      .from('characters')
-      .select('*')
-      .eq('id', characterId)
-      .single();
+    const characterResponse = await fetch(`${supabaseUrl}/rest/v1/characters?id=eq.${characterId}`, {
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+      },
+    });
+    
+    const characters = await characterResponse.json();
+    const character = characters[0];
 
-    if (charError || !character) {
+    if (!character) {
       return new Response(
         JSON.stringify({ error: 'Character not found' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -42,24 +44,35 @@ Deno.serve(async (req) => {
     }
 
     // Get conversation history (last 20 messages for context)
-    const { data: messages } = await supabase
-      .from('messages')
-      .select('*')
-      .eq('conversation_id', conversationId)
-      .order('created_at', { ascending: true })
-      .limit(20);
+    const messagesResponse = await fetch(
+      `${supabaseUrl}/rest/v1/messages?conversation_id=eq.${conversationId}&order=created_at.asc&limit=20`,
+      {
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+        },
+      }
+    );
+    const messages = await messagesResponse.json();
 
     // Save user message
-    await supabase
-      .from('messages')
-      .insert({
+    await fetch(`${supabaseUrl}/rest/v1/messages`, {
+      method: 'POST',
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal',
+      },
+      body: JSON.stringify({
         conversation_id: conversationId,
         role: 'user',
-        content: message
-      });
+        content: message,
+      }),
+    });
 
     // Build conversation history for AI
-    const conversationHistory = (messages || []).map(msg => ({
+    const conversationHistory = (messages || []).map((msg: any) => ({
       role: msg.role,
       content: msg.content
     }));
@@ -69,15 +82,15 @@ Deno.serve(async (req) => {
       content: message
     });
 
-    // Stream response from Lovable AI
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    // Stream response from OpenAI
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${lovableApiKey}`,
+        'Authorization': `Bearer ${openaiApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: character.ai_model || 'google/gemini-2.5-flash',
+        model: character.ai_model || 'gpt-4o-mini',
         messages: [
           { role: 'system', content: character.system_prompt },
           ...conversationHistory
@@ -100,7 +113,7 @@ Deno.serve(async (req) => {
         );
       }
       const errorText = await response.text();
-      console.error('AI gateway error:', response.status, errorText);
+      console.error('OpenAI API error:', response.status, errorText);
       return new Response(
         JSON.stringify({ error: 'AI service error' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -144,13 +157,20 @@ Deno.serve(async (req) => {
           
           // Save assistant message after streaming completes
           if (fullResponse) {
-            await supabase
-              .from('messages')
-              .insert({
+            await fetch(`${supabaseUrl}/rest/v1/messages`, {
+              method: 'POST',
+              headers: {
+                'apikey': supabaseKey,
+                'Authorization': `Bearer ${supabaseKey}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=minimal',
+              },
+              body: JSON.stringify({
                 conversation_id: conversationId,
                 role: 'assistant',
-                content: fullResponse
-              });
+                content: fullResponse,
+              }),
+            });
           }
           
           controller.close();
@@ -171,7 +191,7 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error('Error in chat-stream:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
