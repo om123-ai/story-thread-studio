@@ -205,9 +205,6 @@ const Chat = () => {
               <ChatMessage
                 key={idx}
                 message={msg}
-                showAvatar={!idx || messages[idx - 1]?.role !== msg.role}
-                avatar={msg.role === 'assistant' ? character?.avatar : undefined}
-                avatarImage={msg.role === 'assistant' ? characterImageUrl : undefined}
               />
             ))}
             {isStreaming && <TypingIndicator />}

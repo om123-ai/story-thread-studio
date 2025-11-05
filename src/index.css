@@ -8,48 +8,56 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 6%;
+    --background: 0 0% 4%;
     --foreground: 0 0% 98%;
 
-    --card: 0 0% 10%;
+    --card: 0 0% 8%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 12%;
+    --popover: 0 0% 10%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 24 100% 50%;
+    --primary: 280 100% 70%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 262 83% 58%;
+    --secondary: 195 100% 50%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 0 0% 16%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 262 83% 58%;
+    --accent: 320 100% 60%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 16%;
-    --ring: 24 100% 50%;
+    --border: 0 0% 18%;
+    --input: 0 0% 12%;
+    --ring: 280 100% 70%;
+
+    --neon-cyan: 180 100% 50%;
+    --neon-purple: 280 100% 70%;
+    --neon-pink: 320 100% 60%;
+    --neon-blue: 220 100% 60%;
+    --neon-teal: 175 100% 50%;
 
     --radius: 1rem;
 
-    --gradient-primary: linear-gradient(135deg, hsl(24 100% 50%), hsl(262 83% 58%));
-    --gradient-secondary: linear-gradient(135deg, hsl(262 83% 58%), hsl(280 80% 65%));
-    --gradient-bg: linear-gradient(180deg, hsl(0 0% 6%), hsl(0 0% 4%));
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 10% / 0.5), hsl(0 0% 12% / 0.5));
-    --gradient-overlay: linear-gradient(180deg, transparent 0%, hsl(0 0% 6% / 0.9) 100%);
-    --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.05), hsl(0 0% 100% / 0.02));
+    --gradient-primary: linear-gradient(135deg, hsl(280 100% 70%), hsl(195 100% 50%));
+    --gradient-secondary: linear-gradient(135deg, hsl(320 100% 60%), hsl(280 100% 70%));
+    --gradient-cyber: linear-gradient(135deg, hsl(280 100% 70%), hsl(320 100% 60%), hsl(195 100% 50%));
+    --gradient-bg: linear-gradient(180deg, hsl(0 0% 4%), hsl(220 20% 8%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 8% / 0.6), hsl(0 0% 10% / 0.4));
+    --gradient-overlay: linear-gradient(180deg, transparent 0%, hsl(0 0% 4% / 0.95) 100%);
+    --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.08), hsl(0 0% 100% / 0.02));
     
-    --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.4);
-    --shadow-medium: 0 6px 24px rgba(0, 0, 0, 0.5);
-    --shadow-strong: 0 12px 40px rgba(0, 0, 0, 0.6);
-    --shadow-glow: 0 0 30px rgba(255, 107, 0, 0.3);
-    --shadow-glow-purple: 0 0 30px rgba(139, 92, 246, 0.3);
+    --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.5);
+    --shadow-medium: 0 8px 32px rgba(0, 0, 0, 0.6);
+    --shadow-strong: 0 16px 48px rgba(0, 0, 0, 0.7);
+    --shadow-glow: 0 0 40px hsl(280 100% 70% / 0.4);
+    --shadow-glow-cyan: 0 0 40px hsl(180 100% 50% / 0.4);
+    --shadow-glow-pink: 0 0 40px hsl(320 100% 60% / 0.4);
     
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -57,45 +65,47 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 0 0% 6%;
+    --background: 0 0% 4%;
     --foreground: 0 0% 98%;
 
-    --card: 0 0% 10%;
+    --card: 0 0% 8%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 12%;
+    --popover: 0 0% 10%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 24 100% 50%;
+    --primary: 280 100% 70%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 262 83% 58%;
+    --secondary: 195 100% 50%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 0 0% 16%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 262 83% 58%;
+    --accent: 320 100% 60%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 16%;
-    --ring: 24 100% 50%;
+    --border: 0 0% 18%;
+    --input: 0 0% 12%;
+    --ring: 280 100% 70%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(24 100% 50%), hsl(262 83% 58%));
-    --gradient-secondary: linear-gradient(135deg, hsl(262 83% 58%), hsl(280 80% 65%));
-    --gradient-bg: linear-gradient(180deg, hsl(0 0% 6%), hsl(0 0% 4%));
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 10% / 0.5), hsl(0 0% 12% / 0.5));
-    --gradient-overlay: linear-gradient(180deg, transparent 0%, hsl(0 0% 6% / 0.9) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(280 100% 70%), hsl(195 100% 50%));
+    --gradient-secondary: linear-gradient(135deg, hsl(320 100% 60%), hsl(280 100% 70%));
+    --gradient-cyber: linear-gradient(135deg, hsl(280 100% 70%), hsl(320 100% 60%), hsl(195 100% 50%));
+    --gradient-bg: linear-gradient(180deg, hsl(0 0% 4%), hsl(220 20% 8%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 8% / 0.6), hsl(0 0% 10% / 0.4));
+    --gradient-overlay: linear-gradient(180deg, transparent 0%, hsl(0 0% 4% / 0.95) 100%);
     
-    --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.4);
-    --shadow-medium: 0 6px 24px rgba(0, 0, 0, 0.5);
-    --shadow-strong: 0 12px 40px rgba(0, 0, 0, 0.6);
-    --shadow-glow: 0 0 30px rgba(255, 107, 0, 0.3);
-    --shadow-glow-purple: 0 0 30px rgba(139, 92, 246, 0.3);
+    --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.5);
+    --shadow-medium: 0 8px 32px rgba(0, 0, 0, 0.6);
+    --shadow-strong: 0 16px 48px rgba(0, 0, 0, 0.7);
+    --shadow-glow: 0 0 40px hsl(280 100% 70% / 0.4);
+    --shadow-glow-cyan: 0 0 40px hsl(180 100% 50% / 0.4);
+    --shadow-glow-pink: 0 0 40px hsl(320 100% 60% / 0.4);
   }
 }
 
@@ -195,8 +205,26 @@ All colors MUST be HSL.
 
   .glass-effect {
     background: var(--gradient-glass);
-    backdrop-filter: blur(12px);
-    border: 1px solid hsl(0 0% 100% / 0.1);
+    backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid hsl(0 0% 100% / 0.12);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  .hover-glow {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hover-glow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.5);
+  }
+
+  .neon-border {
+    position: relative;
+    border: 2px solid transparent;
+    background: linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+                var(--gradient-primary) border-box;
+    border-radius: var(--radius);
   }
 }
 

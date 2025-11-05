@@ -14,20 +14,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 const TAG_OPTIONS = [
-  "Flirty",
-  "Romantic",
-  "Seductive",
-  "Dominant",
-  "Submissive",
-  "Playful",
-  "Passionate",
-  "Adventurous",
-  "Caring",
-  "Bold",
-  "Mysterious",
-  "Sweet",
+  "Frontend",
+  "Backend",
+  "Full-Stack",
+  "AI/ML",
+  "Mobile Dev",
+  "DevOps",
+  "Database Expert",
+  "UI/UX",
+  "Security",
+  "Performance",
+  "Cloud",
+  "Testing",
 ];
-const CATEGORIES = ["Romance", "Fantasy", "Casual", "Adventure", "Roleplay", "Entertainment"];
+const CATEGORIES = ["Coding", "Debug", "Design", "Architecture", "Learning", "Code Review"];
 
 const Create = () => {
   const navigate = useNavigate();
@@ -38,14 +38,15 @@ const Create = () => {
   const [characterData, setCharacterData] = useState({
     name: "",
     description: "",
-    avatar: "🤖",
-    category: "Romance",
+    avatar: "💻",
+    category: "Coding",
     tags: [] as string[],
     creativity: 50,
     emotion: 50,
     memory: 50,
     imageUrl: null as string | null,
   });
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
   const toggleTag = (tag: string) => {
     setCharacterData((prev) => ({
@@ -56,14 +57,52 @@ const Create = () => {
     }));
   };
 
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+    
+    if (!characterData.name.trim()) {
+      errors.name = "Name is required";
+    } else if (characterData.name.trim().length < 3) {
+      errors.name = "Name must be at least 3 characters";
+    } else if (characterData.name.trim().length > 50) {
+      errors.name = "Name must be less than 50 characters";
+    }
+
+    if (!characterData.description.trim()) {
+      errors.description = "Description is required";
+    } else if (characterData.description.trim().length < 20) {
+      errors.description = "Description must be at least 20 characters";
+    } else if (characterData.description.trim().length > 500) {
+      errors.description = "Description must be less than 500 characters";
+    }
+
+    if (characterData.tags.length > 5) {
+      errors.tags = "Maximum 5 tags allowed";
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
       toast({
-        title: "Invalid file",
-        description: "Please upload an image file",
+        title: "Invalid file format",
+        description: "Please upload a JPEG, PNG, or WebP image",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      toast({
+        title: "File too large",
+        description: "Image must be less than 5MB",
         variant: "destructive",
       });
       return;
@@ -75,7 +114,7 @@ const Create = () => {
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `${fileName}`;
 
-      const { error: uploadError, data } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('character-images')
         .upload(filePath, file);
 
@@ -96,7 +135,7 @@ const Create = () => {
       console.error('Error uploading image:', error);
       toast({
         title: "Upload failed",
-        description: "Failed to upload image. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to upload image. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -110,23 +149,32 @@ const Create = () => {
   };
 
   const handleCreate = async () => {
-    if (!characterData.name || !characterData.description) {
+    if (!validateForm()) {
+      toast({
+        title: "Validation Error",
+        description: "Please fix the errors before creating the character",
+        variant: "destructive",
+      });
       return;
     }
 
-    await createCharacter.mutateAsync({
-      name: characterData.name,
-      description: characterData.description,
-      avatar: characterData.avatar,
-      category: characterData.category,
-      tags: characterData.tags,
-      creativity: characterData.creativity,
-      emotion: characterData.emotion,
-      memory: characterData.memory,
-      imageUrl: characterData.imageUrl,
-    });
+    try {
+      await createCharacter.mutateAsync({
+        name: characterData.name.trim(),
+        description: characterData.description.trim(),
+        avatar: characterData.avatar,
+        category: characterData.category,
+        tags: characterData.tags,
+        creativity: characterData.creativity,
+        emotion: characterData.emotion,
+        memory: characterData.memory,
+        imageUrl: characterData.imageUrl,
+      });
 
-    navigate("/discover");
+      navigate("/discover");
+    } catch (error) {
+      console.error('Character creation error:', error);
+    }
   };
 
   return (
@@ -136,9 +184,9 @@ const Create = () => {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid md:grid-cols-2 gap-8">
           {/* Form */}
-          <Card className="p-8 glass-effect border-border/50">
-            <h1 className="text-3xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent">
-              Create Character
+          <Card className="p-8 glass-effect border-border/50 hover-glow">
+            <h1 className="text-3xl font-bold mb-6 bg-gradient-cyber bg-clip-text text-transparent">
+              Create AI Assistant
             </h1>
 
             <div className="space-y-6">
@@ -147,11 +195,11 @@ const Create = () => {
                 <Label>Character Image</Label>
                 {imagePreview ? (
                   <div className="relative">
-                    <img 
-                      src={imagePreview} 
-                      alt="Character preview" 
-                      className="w-full h-48 object-cover rounded-xl"
-                    />
+                  <img 
+                    src={imagePreview} 
+                    alt="Character preview" 
+                    className="w-full h-48 object-cover object-center rounded-xl"
+                  />
                     <Button
                       variant="destructive"
                       size="icon"
@@ -184,9 +232,16 @@ const Create = () => {
                 <Input
                   id="name"
                   value={characterData.name}
-                  onChange={(e) => setCharacterData({ ...characterData, name: e.target.value })}
-                  placeholder="Enter character name"
+                  onChange={(e) => {
+                    setCharacterData({ ...characterData, name: e.target.value });
+                    setValidationErrors({ ...validationErrors, name: "" });
+                  }}
+                  placeholder="Enter assistant name"
+                  className={validationErrors.name ? "border-destructive" : ""}
                 />
+                {validationErrors.name && (
+                  <p className="text-xs text-destructive">{validationErrors.name}</p>
+                )}
               </div>
 
               {/* Category */}
@@ -210,39 +265,59 @@ const Create = () => {
 
               {/* Description */}
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">Description & Expertise</Label>
                 <Textarea
                   id="description"
                   value={characterData.description}
-                  onChange={(e) =>
-                    setCharacterData({ ...characterData, description: e.target.value })
-                  }
-                  placeholder="Describe your character..."
+                  onChange={(e) => {
+                    setCharacterData({ ...characterData, description: e.target.value });
+                    setValidationErrors({ ...validationErrors, description: "" });
+                  }}
+                  placeholder="Describe the AI assistant's expertise and personality..."
                   rows={4}
+                  className={validationErrors.description ? "border-destructive" : ""}
                 />
+                {validationErrors.description && (
+                  <p className="text-xs text-destructive">{validationErrors.description}</p>
+                )}
               </div>
 
               {/* Tags */}
               <div className="space-y-2">
-                <Label>Personality Tags</Label>
+                <Label>Specialization Tags (Max 5)</Label>
                 <div className="flex flex-wrap gap-2">
                   {TAG_OPTIONS.map((tag) => (
                     <Badge
                       key={tag}
                       variant={characterData.tags.includes(tag) ? "default" : "outline"}
-                      className="cursor-pointer hover:scale-105 transition-transform"
-                      onClick={() => toggleTag(tag)}
+                      className="cursor-pointer hover:scale-105 transition-all duration-300 hover:shadow-glow"
+                      onClick={() => {
+                        if (characterData.tags.length >= 5 && !characterData.tags.includes(tag)) {
+                          toast({
+                            title: "Maximum tags reached",
+                            description: "You can select up to 5 tags",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+                        toggleTag(tag);
+                        setValidationErrors({ ...validationErrors, tags: "" });
+                      }}
                     >
                       {tag}
                     </Badge>
                   ))}
                 </div>
+                {validationErrors.tags && (
+                  <p className="text-xs text-destructive">{validationErrors.tags}</p>
+                )}
               </div>
 
               {/* Sliders */}
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Creativity: {characterData.creativity}%</Label>
+                  <Label>Code Creativity: {characterData.creativity}%</Label>
+                  <p className="text-xs text-muted-foreground">How experimental vs conservative the solutions are</p>
                   <Slider
                     value={[characterData.creativity]}
                     onValueChange={([value]) =>
@@ -250,11 +325,13 @@ const Create = () => {
                     }
                     max={100}
                     step={1}
+                    className="cursor-pointer"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Emotion: {characterData.emotion}%</Label>
+                  <Label>Empathy: {characterData.emotion}%</Label>
+                  <p className="text-xs text-muted-foreground">Patience level and teaching style</p>
                   <Slider
                     value={[characterData.emotion]}
                     onValueChange={([value]) =>
@@ -262,11 +339,13 @@ const Create = () => {
                     }
                     max={100}
                     step={1}
+                    className="cursor-pointer"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Memory: {characterData.memory}%</Label>
+                  <Label>Context Awareness: {characterData.memory}%</Label>
+                  <p className="text-xs text-muted-foreground">Project context retention ability</p>
                   <Slider
                     value={[characterData.memory]}
                     onValueChange={([value]) =>
@@ -274,24 +353,25 @@ const Create = () => {
                     }
                     max={100}
                     step={1}
+                    className="cursor-pointer"
                   />
                 </div>
               </div>
 
               <Button
                 onClick={handleCreate}
-                disabled={createCharacter.isPending || !characterData.name || !characterData.description}
-                className="w-full bg-gradient-primary shadow-glow"
+                disabled={createCharacter.isPending}
+                className="w-full bg-gradient-primary shadow-glow hover:shadow-glow-pink transition-all duration-300 hover:scale-[1.02]"
               >
                 {createCharacter.isPending ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Creating...
+                    Creating Assistant...
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4 mr-2" />
-                    Create Character
+                    Create AI Assistant
                   </>
                 )}
               </Button>
@@ -299,8 +379,8 @@ const Create = () => {
           </Card>
 
           {/* Live Preview */}
-          <Card className="p-8 glass-effect border-border/50 sticky top-24 h-fit">
-            <h2 className="text-xl font-semibold mb-6">Preview</h2>
+          <Card className="p-8 glass-effect border-border/50 sticky top-24 h-fit neon-border">
+            <h2 className="text-xl font-semibold mb-6 bg-gradient-secondary bg-clip-text text-transparent">Live Preview</h2>
             
             <div className="space-y-6">
               <div className="flex items-center gap-4">
@@ -308,23 +388,23 @@ const Create = () => {
                   <img 
                     src={imagePreview} 
                     alt="Character preview"
-                    className="w-20 h-20 rounded-2xl object-cover"
+                    className="w-20 h-20 rounded-2xl object-cover object-center"
                   />
                 ) : (
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                    <Upload className="w-8 h-8 text-muted-foreground" />
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-cyber flex items-center justify-center">
+                    <Upload className="w-8 h-8 text-white" />
                   </div>
                 )}
                 <div>
                   <h3 className="text-xl font-semibold">
-                    {characterData.name || "Character Name"}
+                    {characterData.name || "AI Assistant Name"}
                   </h3>
-                  <Badge variant="secondary">{characterData.category}</Badge>
+                  <Badge variant="secondary" className="bg-gradient-primary text-primary-foreground">{characterData.category}</Badge>
                 </div>
               </div>
 
               <p className="text-muted-foreground">
-                {characterData.description || "Character description will appear here..."}
+                {characterData.description || "AI assistant expertise and description will appear here..."}
               </p>
 
               {characterData.tags.length > 0 && (
@@ -339,16 +419,16 @@ const Create = () => {
 
               <div className="space-y-3 pt-4 border-t border-border/50">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Creativity</span>
-                  <span className="font-medium">{characterData.creativity}%</span>
+                  <span className="text-muted-foreground">Code Creativity</span>
+                  <span className="font-medium text-primary">{characterData.creativity}%</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Emotion</span>
-                  <span className="font-medium">{characterData.emotion}%</span>
+                  <span className="text-muted-foreground">Empathy</span>
+                  <span className="font-medium text-secondary">{characterData.emotion}%</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Memory</span>
-                  <span className="font-medium">{characterData.memory}%</span>
+                  <span className="text-muted-foreground">Context Awareness</span>
+                  <span className="font-medium text-accent">{characterData.memory}%</span>
                 </div>
               </div>
             </div>

@@ -8,7 +8,7 @@ interface ChatMessageProps {
   avatarImage?: string;
 }
 
-export const ChatMessage = ({ message, showAvatar = false, avatar, avatarImage }: ChatMessageProps) => {
+export const ChatMessage = ({ message }: ChatMessageProps) => {
   const isUser = message.role === "user";
 
   return (
@@ -16,26 +16,12 @@ export const ChatMessage = ({ message, showAvatar = false, avatar, avatarImage }
       "flex gap-3 items-end animate-fade-in",
       isUser ? "justify-end" : "justify-start"
     )}>
-      {!isUser && showAvatar && (
-        avatarImage ? (
-          <img 
-            src={avatarImage} 
-            alt="Character"
-            className="w-9 h-9 rounded-full object-cover flex-shrink-0"
-          />
-        ) : (
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-xl flex-shrink-0">
-            {avatar}
-          </div>
-        )
-      )}
-      
       <div
         className={cn(
-          "max-w-[70%] rounded-2xl px-4 py-3",
+          "max-w-[70%] rounded-2xl px-5 py-3 transition-all duration-300",
           isUser
-            ? "bg-gradient-primary text-primary-foreground shadow-glow"
-            : "glass-effect text-foreground"
+            ? "bg-gradient-primary text-primary-foreground shadow-glow hover:shadow-glow-pink"
+            : "glass-effect text-foreground border border-border/50"
         )}
       >
         <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">{message.content}</p>
