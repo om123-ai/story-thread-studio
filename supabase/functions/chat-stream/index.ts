@@ -23,7 +23,7 @@ serve(async (req) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const openaiApiKey = Deno.env.get('OPENAI_API_KEY')!;
+    const openrouterApiKey = Deno.env.get('OPENROUTER_API_KEY')!;
 
     // Get character details
     const characterResponse = await fetch(`${supabaseUrl}/rest/v1/characters?id=eq.${characterId}`, {
@@ -82,15 +82,17 @@ serve(async (req) => {
       content: message
     });
 
-    // Stream response from OpenAI
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    // Stream response from OpenRouter
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,
+        'Authorization': `Bearer ${openrouterApiKey}`,
         'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://vibecoder.app',
+        'X-Title': 'Vibe Coder',
       },
       body: JSON.stringify({
-        model: character.ai_model || 'gpt-4o-mini',
+        model: character.ai_model || 'cognitivecomputations/dolphin-mistral-24b-venice-edition:free',
         messages: [
           { role: 'system', content: character.system_prompt },
           ...conversationHistory
@@ -113,7 +115,7 @@ serve(async (req) => {
         );
       }
       const errorText = await response.text();
-      console.error('OpenAI API error:', response.status, errorText);
+      console.error('OpenRouter API error:', response.status, errorText);
       return new Response(
         JSON.stringify({ error: 'AI service error' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
